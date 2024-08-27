@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { Sidebar } from './Sidebar';
 import { fetchProvidersList } from '../services/api';
 
+// Define the styled components
 const MainComponent = styled.div<{ isOpen: boolean }>`
   background-color: #42607b;
   width: 100%;
@@ -10,10 +11,11 @@ const MainComponent = styled.div<{ isOpen: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+
   ${({ isOpen }) =>
     isOpen &&
     `
-    position: relative;
     &:before {
       content: "";
       position: absolute;
@@ -49,22 +51,28 @@ const ExploreButton = styled.button<{ isOpen: boolean }>`
 const Home = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  // Debounced function to fetch providers list
+  const fetchProviders = useCallback(async () => {
+    await fetchProvidersList();
+  }, []);
+
   const toggleSidebar = async () => {
     if (!isOpen) {
-      await fetchProvidersList();
+      await fetchProviders();
     }
-    setIsOpen(!isOpen);
+    setIsOpen(prevState => !prevState);
   };
+
+  const handleMainComponentClick = useCallback(() => {
+    if (isOpen) {
+      toggleSidebar();
+    }
+  }, [isOpen, toggleSidebar]);
 
   return (
     <>
       <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-      <MainComponent
-        isOpen={isOpen}
-        onClick={() => {
-          if (isOpen) toggleSidebar();
-        }}
-      >
+      <MainComponent isOpen={isOpen} onClick={handleMainComponentClick}>
         <Container>
           <ExploreButton onClick={toggleSidebar} isOpen={isOpen}>
             Explore Web APIs
