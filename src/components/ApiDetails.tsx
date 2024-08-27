@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import adobeImg from '../assets/AdobeBig.png';
 import { useLocation } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
+import Sidebar from './Sidebar';
 import styled from 'styled-components';
 
-const ProductDetailsContainer = styled.div`
+// Styled components with updated names
+const PageContainer = styled.div`
   background-color: #42607b;
   width: 100%;
   min-height: 100vh;
@@ -12,7 +13,7 @@ const ProductDetailsContainer = styled.div`
   box-sizing: border-box;
 `;
 
-const ProductDetails = styled.div`
+const ProductHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
@@ -20,14 +21,14 @@ const ProductDetails = styled.div`
   justify-content: center;
 `;
 
-const ProductImg = styled.div`
+const ImageWrapper = styled.div`
   img {
     width: 120px;
     height: 120px;
   }
 `;
 
-const ProductName = styled.div`
+const TitleWrapper = styled.div`
   h1 {
     font-size: 32px;
     color: #ffffff;
@@ -35,7 +36,7 @@ const ProductName = styled.div`
   }
 `;
 
-const ProductDescription = styled.div`
+const DescriptionWrapper = styled.div`
   margin-top: 40px;
   width: 100%;
   max-width: 1200px;
@@ -43,7 +44,7 @@ const ProductDescription = styled.div`
   padding-right: 20px;
 `;
 
-const Details = styled.div`
+const Section = styled.div`
   margin-top: 40px;
 
   h1 {
@@ -62,7 +63,7 @@ const Details = styled.div`
   }
 `;
 
-const ContactDetails = styled.div`
+const ContactSection = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
@@ -80,14 +81,14 @@ const ContactDetails = styled.div`
   }
 `;
 
-const ProductContainer = styled.div`
+const SidebarWrapper = styled.div`
   width: 100%;
   max-width: 250px;
   margin: 30px auto;
   position: relative;
 `;
 
-const ExploreBtn = styled.button`
+const ExploreButton = styled.button`
   background-color: #00a1d4;
   border-radius: 5px;
   padding: 10px;
@@ -99,13 +100,13 @@ const ExploreBtn = styled.button`
   color: #ffffff;
   display: block;
   margin: 0 auto;
-  position: fixed; /* Changed from absolute to fixed */
-  bottom: 20px; /* Adjust this value as needed */
+  position: fixed;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
 `;
 
-const DataNotFound = styled.p`
+const NoDataMessage = styled.p`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -129,68 +130,65 @@ interface ProviderData {
 
 const WebApiServiceDetails: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
   const location = useLocation();
   const propsData = location.state as ProviderData;
 
+  const toggleSidebar = useCallback(() => {
+    setIsOpen(prevState => !prevState);
+  }, []);
+
+  if (!propsData?.title) {
+    return <NoDataMessage>No Data Found</NoDataMessage>;
+  }
+
   return (
-    <>
-      {propsData?.title ? (
-        <ProductDetailsContainer>
-          <ProductDetails>
-            <ProductImg>
-              <img src={adobeImg} alt="API Logo" />
-            </ProductImg>
-            <ProductName>
-              <h1>{propsData.title}</h1>
-            </ProductName>
-          </ProductDetails>
-          <ProductDescription>
-            <Details>
-              <h1>Description</h1>
-              <p>{propsData.description ?? 'Description Not Found'}</p>
-            </Details>
-            <Details>
-              <h1>Swagger</h1>
-              <p>{propsData['x-origin']?.[0]?.url ?? 'URL Not Found'}</p>
-            </Details>
-            <Details>
-              <h1>Contact</h1>
-              <ContactDetails>
-                <h1>Email</h1>
-                <p>{propsData.contact?.email ?? 'Email Not Found'}</p>
-              </ContactDetails>
-              <ContactDetails>
-                <h1>Name</h1>
-                <p>{propsData.contact?.name ?? 'Name Not Found'}</p>
-              </ContactDetails>
-              <ContactDetails>
-                <h1>Url</h1>
-                <p>{propsData.contact?.url ?? 'URL Not Found'}</p>
-              </ContactDetails>
-            </Details>
-          </ProductDescription>
-          <ProductContainer>
-            <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-            <ExploreBtn
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                toggleSidebar();
-              }}
-              disabled={isOpen}
-            >
-              Explore more APIs
-            </ExploreBtn>
-          </ProductContainer>
-        </ProductDetailsContainer>
-      ) : (
-        <DataNotFound>No Data Found</DataNotFound>
-      )}
-    </>
+    <PageContainer>
+      <ProductHeader>
+        <ImageWrapper>
+          <img src={adobeImg} alt="API Logo" />
+        </ImageWrapper>
+        <TitleWrapper>
+          <h1>{propsData.title}</h1>
+        </TitleWrapper>
+      </ProductHeader>
+      <DescriptionWrapper>
+        <Section>
+          <h1>Description</h1>
+          <p>{propsData.description ?? 'Description Not Found'}</p>
+        </Section>
+        <Section>
+          <h1>Swagger</h1>
+          <p>{propsData['x-origin']?.[0]?.url ?? 'URL Not Found'}</p>
+        </Section>
+        <Section>
+          <h1>Contact</h1>
+          <ContactSection>
+            <h1>Email</h1>
+            <p>{propsData.contact?.email ?? 'Email Not Found'}</p>
+          </ContactSection>
+          <ContactSection>
+            <h1>Name</h1>
+            <p>{propsData.contact?.name ?? 'Name Not Found'}</p>
+          </ContactSection>
+          <ContactSection>
+            <h1>Url</h1>
+            <p>{propsData.contact?.url ?? 'URL Not Found'}</p>
+          </ContactSection>
+        </Section>
+      </DescriptionWrapper>
+      <SidebarWrapper>
+        <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
+        <ExploreButton
+          onClick={e => {
+            e.stopPropagation();
+            toggleSidebar();
+          }}
+          disabled={isOpen}
+        >
+          Explore more APIs
+        </ExploreButton>
+      </SidebarWrapper>
+    </PageContainer>
   );
 };
 

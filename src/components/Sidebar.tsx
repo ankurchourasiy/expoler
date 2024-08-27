@@ -19,7 +19,7 @@ interface SidebarProps {
   toggleSidebar: () => void;
 }
 
-const SidebarContainer = styled.div<SidebarProps>`
+const SidebarWrapper = styled.div<SidebarProps>`
   position: fixed;
   top: 0;
   right: ${({ isOpen }) => (isOpen ? '0' : '-520px')};
@@ -32,19 +32,19 @@ const SidebarContainer = styled.div<SidebarProps>`
   overflow: auto;
 `;
 
-const ContentWrapper = styled.div`
+const SidebarContent = styled.div`
   padding: 20px;
   border-left: 2px solid #0393f3;
 `;
 
-const AccordionItem = styled.div<{ isActive: boolean }>`
+const AccordionSection = styled.div<{ isActive: boolean }>`
   background-color: ${({ isActive }) => (isActive ? '#1a2632' : 'transparent')};
   padding: 6px 0;
   border-radius: 8px;
   transition: 0.5s;
 `;
 
-const AccordionTitle = styled.div`
+const AccordionHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,7 +52,7 @@ const AccordionTitle = styled.div`
   cursor: pointer;
 `;
 
-const AccordionContent = styled.div`
+const AccordionItem = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
@@ -61,7 +61,7 @@ const AccordionContent = styled.div`
   padding: 10px 12px;
 `;
 
-const Arrow = styled.img<{ isActive: boolean }>`
+const RotateArrow = styled.img<{ isActive: boolean }>`
   transform: ${({ isActive }) =>
     isActive ? 'rotate(-180deg)' : 'rotate(0deg)'};
   transition: transform 0.5s ease;
@@ -70,17 +70,17 @@ const Arrow = styled.img<{ isActive: boolean }>`
   object-fit: cover;
 `;
 
-const Title = styled.h2`
+const SidebarTitle = styled.h2`
   text-align: center;
   font-weight: 400;
   margin: 0;
 `;
 
-const ApiTitle = styled.p`
+const ApiLabel = styled.p`
   margin: 0;
 `;
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   const [providers, setProviders] = useState<string[]>([]);
   const [providerDetails, setProviderDetails] = useState<ProvidersData>({});
   const [activeStates, setActiveStates] = useState<boolean[]>([]);
@@ -110,49 +110,58 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     });
 
     if (!providerDetails[provider]) {
-      const details = await fetchProviderDetails(provider);
-      setProviderDetails(data => ({
-        ...data,
-        [provider]: details,
-      }));
+      try {
+        const details = await fetchProviderDetails(provider);
+        setProviderDetails(prevDetails => ({
+          ...prevDetails,
+          [provider]: details,
+        }));
+      } catch (error) {
+        console.error('Error fetching provider details:', error);
+      }
     }
   };
 
   const handleApiClick = (providerKey: string, apiIndex: number) => {
     const apiData = providerDetails[providerKey]?.[apiIndex];
-    navigate('/WebApiServiceDetails', { state: apiData });
-    toggleSidebar(); // Ensure the sidebar is toggled
+    if (apiData) {
+      navigate('/WebApiServiceDetails', { state: apiData });
+      toggleSidebar(); // Ensure the sidebar is toggled
+    }
   };
 
   return (
-    <SidebarContainer isOpen={isOpen} toggleSidebar={toggleSidebar}>
-      <ContentWrapper>
-        <Title>Select Provider</Title>
-        {providers.map((item, index) => {
-          const isActive = activeStates[index];
-          return (
-            <AccordionItem isActive={isActive} key={index}>
-              <AccordionTitle onClick={() => handleAccordionClick(item, index)}>
-                <div>{item}</div>
-                <Arrow src={ArrowImg} alt="arrow" isActive={isActive} />
-              </AccordionTitle>
-              {isActive && (
-                <div>
-                  {providerDetails[item]?.map((api, apiIndex) => (
-                    <AccordionContent
-                      key={apiIndex}
-                      onClick={() => handleApiClick(item, apiIndex)}
-                    >
-                      <img src={Adobe} alt="" />
-                      <ApiTitle>{api.title ?? 'No Data Found'}</ApiTitle>
-                    </AccordionContent>
-                  ))}
-                </div>
-              )}
-            </AccordionItem>
-          );
-        })}
-      </ContentWrapper>
-    </SidebarContainer>
+    <SidebarWrapper isOpen={isOpen} toggleSidebar={toggleSidebar}>
+      <SidebarContent>
+        <SidebarTitle>Select Provider</SidebarTitle>
+        {providers.map((item, index) => (
+          <AccordionSection key={index} isActive={activeStates[index]}>
+            <AccordionHeader onClick={() => handleAccordionClick(item, index)}>
+              <div>{item}</div>
+              <RotateArrow
+                src={ArrowImg}
+                alt="arrow"
+                isActive={activeStates[index]}
+              />
+            </AccordionHeader>
+            {activeStates[index] && (
+              <div>
+                {providerDetails[item]?.map((api, apiIndex) => (
+                  <AccordionItem
+                    key={apiIndex}
+                    onClick={() => handleApiClick(item, apiIndex)}
+                  >
+                    <img src={Adobe} alt="" />
+                    <ApiLabel>{api.title ?? 'No Data Found'}</ApiLabel>
+                  </AccordionItem>
+                ))}
+              </div>
+            )}
+          </AccordionSection>
+        ))}
+      </SidebarContent>
+    </SidebarWrapper>
   );
 };
+
+export default Sidebar;

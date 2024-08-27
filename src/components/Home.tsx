@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { Sidebar } from './Sidebar';
+import Sidebar from '../components/Sidebar';
 import { fetchProvidersList } from '../services/api';
 
 // Define the styled components
-const MainComponent = styled.div<{ isOpen: boolean }>`
+const OverlayWrapper = styled.div<{ isOpen: boolean }>`
   background-color: #42607b;
   width: 100%;
   height: 100vh;
@@ -29,7 +29,7 @@ const MainComponent = styled.div<{ isOpen: boolean }>`
   `}
 `;
 
-const Container = styled.div`
+const ButtonContainer = styled.div`
   width: 100%;
   max-width: 250px;
 `;
@@ -63,7 +63,7 @@ const Home = () => {
     setIsOpen(prevState => !prevState);
   };
 
-  const handleMainComponentClick = useCallback(() => {
+  const handleOverlayClick = useCallback(() => {
     if (isOpen) {
       toggleSidebar();
     }
@@ -72,13 +72,13 @@ const Home = () => {
   return (
     <>
       <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-      <MainComponent isOpen={isOpen} onClick={handleMainComponentClick}>
-        <Container>
+      <OverlayWrapper isOpen={isOpen} onClick={handleOverlayClick}>
+        <ButtonContainer>
           <ExploreButton onClick={toggleSidebar} isOpen={isOpen}>
             Explore Web APIs
           </ExploreButton>
-        </Container>
-      </MainComponent>
+        </ButtonContainer>
+      </OverlayWrapper>
     </>
   );
 };
