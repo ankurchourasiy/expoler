@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import ArrowImg from '../assets/ArrowImg.png';
 import Adobe from '../assets/Adobe.png';
 import { fetchProvidersList, fetchProviderDetails } from '../services/api';
@@ -17,6 +18,67 @@ interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
 }
+
+const SidebarContainer = styled.div<SidebarProps>`
+  position: fixed;
+  top: 0;
+  right: ${({ isOpen }) => (isOpen ? '0' : '-520px')};
+  width: 520px;
+  height: 100%;
+  background-color: #42607b;
+  transition: right 0.3s ease;
+  color: white;
+  z-index: 2;
+  overflow: auto;
+`;
+
+const ContentWrapper = styled.div`
+  padding: 20px;
+  border-left: 2px solid #0393f3;
+`;
+
+const AccordionItem = styled.div<{ isActive: boolean }>`
+  background-color: ${({ isActive }) => (isActive ? '#1a2632' : 'transparent')};
+  padding: 6px 0;
+  border-radius: 8px;
+  transition: 0.5s;
+`;
+
+const AccordionTitle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  cursor: pointer;
+`;
+
+const AccordionContent = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 10px 12px;
+`;
+
+const Arrow = styled.img<{ isActive: boolean }>`
+  transform: ${({ isActive }) =>
+    isActive ? 'rotate(-180deg)' : 'rotate(0deg)'};
+  transition: transform 0.5s ease;
+  width: 10px;
+  height: 6.42px;
+  object-fit: cover;
+`;
+
+const Title = styled.h2`
+  text-align: center;
+  font-weight: 400;
+  margin: 0;
+`;
+
+const ApiTitle = styled.p`
+  margin: 0;
+`;
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   const [providers, setProviders] = useState<string[]>([]);
@@ -59,68 +121,38 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   const handleApiClick = (providerKey: string, apiIndex: number) => {
     const apiData = providerDetails[providerKey]?.[apiIndex];
     navigate('/WebApiServiceDetails', { state: apiData });
-    toggleSidebar();
+    toggleSidebar(); // Ensure the sidebar is toggled
   };
 
   return (
-    <div
-      className="collapsedSidebar"
-      style={{
-        position: 'fixed',
-        top: 0,
-        right: isOpen ? 0 : '-520px',
-        width: '520px',
-        height: '100%',
-        backgroundColor: '#42607B',
-        transition: 'right 0.3s ease',
-        color: 'white',
-        zIndex: 2,
-        overflow: 'auto',
-      }}
-    >
-      <div style={{ padding: '20px', borderLeft: '2px solid #0393f3' }}>
-        <h2
-          style={{ textAlign: 'center', fontWeight: '400', marginTop: '0px' }}
-        >
-          Select Provider
-        </h2>
+    <SidebarContainer isOpen={isOpen} toggleSidebar={toggleSidebar}>
+      <ContentWrapper>
+        <Title>Select Provider</Title>
         {providers.map((item, index) => {
           const isActive = activeStates[index];
           return (
-            <div className="accordion" key={index}>
-              <div
-                className={`accordion-item ${isActive ? 'accordianContainer' : ''}`}
-              >
-                <div
-                  className="accordion-title"
-                  onClick={() => handleAccordionClick(item, index)}
-                >
-                  <div className="accordion_title">{item}</div>
-                  {isActive ? (
-                    <img src={ArrowImg} alt="arrowup" className="arrowup" />
-                  ) : (
-                    <img src={ArrowImg} alt="arrowdown" className="arrowdown" />
-                  )}
+            <AccordionItem isActive={isActive} key={index}>
+              <AccordionTitle onClick={() => handleAccordionClick(item, index)}>
+                <div>{item}</div>
+                <Arrow src={ArrowImg} alt="arrow" isActive={isActive} />
+              </AccordionTitle>
+              {isActive && (
+                <div>
+                  {providerDetails[item]?.map((api, apiIndex) => (
+                    <AccordionContent
+                      key={apiIndex}
+                      onClick={() => handleApiClick(item, apiIndex)}
+                    >
+                      <img src={Adobe} alt="" />
+                      <ApiTitle>{api.title ?? 'No Data Found'}</ApiTitle>
+                    </AccordionContent>
+                  ))}
                 </div>
-                {isActive && (
-                  <div className="">
-                    {providerDetails[item]?.map((api, apiIndex) => (
-                      <div
-                        className="accordion-content"
-                        key={apiIndex}
-                        onClick={() => handleApiClick(item, apiIndex)}
-                      >
-                        <img src={Adobe} alt="" />
-                        <p className="m-0">{api.title ?? 'No Data Found'}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+              )}
+            </AccordionItem>
           );
         })}
-      </div>
-    </div>
+      </ContentWrapper>
+    </SidebarContainer>
   );
 };
