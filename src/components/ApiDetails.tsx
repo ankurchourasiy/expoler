@@ -2,6 +2,117 @@ import React, { useState } from 'react';
 import adobeImg from '../assets/AdobeBig.png';
 import { useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
+import styled from 'styled-components';
+
+const ProductDetailsContainer = styled.div`
+  background-color: #42607b;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+`;
+
+const ProductDetails = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 58px;
+  justify-content: center;
+`;
+
+const ProductImg = styled.div`
+  img {
+    width: 120px;
+    height: 120px;
+  }
+`;
+
+const ProductName = styled.div`
+  h1 {
+    font-size: 32px;
+    color: #ffffff;
+    font-weight: 400;
+  }
+`;
+
+const ProductDescription = styled.div`
+  margin-top: 40px;
+  width: 100%;
+  max-width: 1200px;
+  padding-left: 20px;
+  padding-right: 20px;
+`;
+
+const Details = styled.div`
+  margin-top: 40px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 400;
+    color: #ffffff;
+    margin: 0;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+    color: #ffffff;
+  }
+`;
+
+const ContactDetails = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: lighter;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 400;
+  }
+`;
+
+const ProductContainer = styled.div`
+  width: 100%;
+  max-width: 250px;
+  margin: 30px auto;
+  position: relative;
+`;
+
+const ExploreBtn = styled.button`
+  background-color: #00a1d4;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  outline: none;
+  border: none;
+  color: #ffffff;
+  display: block;
+  margin: 0 auto;
+  position: fixed; /* Changed from absolute to fixed */
+  bottom: 20px; /* Adjust this value as needed */
+  left: 50%;
+  transform: translateX(-50%);
+`;
+
+const DataNotFound = styled.p`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  font-size: 18px;
+`;
 
 interface ContactInfo {
   email?: string;
@@ -29,65 +140,55 @@ const WebApiServiceDetails: React.FC = () => {
   return (
     <>
       {propsData?.title ? (
-        <div className="productDetailsContainer">
-          <div className="productDetails">
-            <div className="productImg">
+        <ProductDetailsContainer>
+          <ProductDetails>
+            <ProductImg>
               <img src={adobeImg} alt="API Logo" />
-            </div>
-            <div className="productName">
+            </ProductImg>
+            <ProductName>
               <h1>{propsData.title}</h1>
-            </div>
-          </div>
-          <div className="productDescription">
-            <div className="details">
+            </ProductName>
+          </ProductDetails>
+          <ProductDescription>
+            <Details>
               <h1>Description</h1>
               <p>{propsData.description ?? 'Description Not Found'}</p>
-            </div>
-            <div className="details">
+            </Details>
+            <Details>
               <h1>Swagger</h1>
               <p>{propsData['x-origin']?.[0]?.url ?? 'URL Not Found'}</p>
-            </div>
-            <div className="details">
+            </Details>
+            <Details>
               <h1>Contact</h1>
-              <div className="contactDetails">
+              <ContactDetails>
                 <h1>Email</h1>
                 <p>{propsData.contact?.email ?? 'Email Not Found'}</p>
-              </div>
-              <div className="contactDetails">
+              </ContactDetails>
+              <ContactDetails>
                 <h1>Name</h1>
                 <p>{propsData.contact?.name ?? 'Name Not Found'}</p>
-              </div>
-              <div className="contactDetails">
+              </ContactDetails>
+              <ContactDetails>
                 <h1>Url</h1>
                 <p>{propsData.contact?.url ?? 'URL Not Found'}</p>
-              </div>
-            </div>
-          </div>
-          <div className="productContainer">
+              </ContactDetails>
+            </Details>
+          </ProductDescription>
+          <ProductContainer>
             <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-            <div
-              className={isOpen ? 'mainComponent backdrop' : 'productContainer'}
-              onClick={() => {
-                if (isOpen) toggleSidebar();
+            <ExploreBtn
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                toggleSidebar();
               }}
+              disabled={isOpen}
             >
-              <div>
-                <button
-                  onClick={e => {
-                    e.stopPropagation();
-                    toggleSidebar();
-                  }}
-                  className={isOpen ? 'hidden' : 'exploreBtn'}
-                  disabled={isOpen}
-                >
-                  Explore more APIs
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+              Explore more APIs
+            </ExploreBtn>
+          </ProductContainer>
+        </ProductDetailsContainer>
       ) : (
-        <p className="datanotfound">No Data Found</p>
+        <DataNotFound>No Data Found</DataNotFound>
       )}
     </>
   );

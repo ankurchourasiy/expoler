@@ -13,12 +13,12 @@ interface ProvidersData {
   [key: string]: ProviderInfo[];
 }
 
-interface SideNavProps {
+interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
 }
 
-export const Sidebar: React.FC<SideNavProps> = ({ isOpen, toggleSidebar }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   const [providers, setProviders] = useState<string[]>([]);
   const [providerDetails, setProviderDetails] = useState<ProvidersData>({});
   const [activeStates, setActiveStates] = useState<boolean[]>([]);

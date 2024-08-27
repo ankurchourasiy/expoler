@@ -15,6 +15,7 @@ export const fetchProvidersList = async (): Promise<string[]> => {
       `https://api.apis.guru/v2/providers.json`,
     );
     providersList = response?.data?.data || [];
+    // console.log(providersList);
     return providersList;
   } catch (error) {
     console.error('Error fetching providers list:', error);
@@ -35,6 +36,7 @@ export const fetchProviderDetails = async (
       ? Object.values(apis).map(api => api.info)
       : [];
     cachedProviderDetails[provider] = providerDetails;
+    console.log(providerDetails);
     return providerDetails;
   } catch (error) {
     console.error(`Error fetching details for provider ${provider}:`, error);
