@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import adobeImg from '../assets/AdobeBig.png';
+import adixooImg from '../assets/adixoo.jpg';
 import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import styled from 'styled-components';
 
 // Styled components with updated names
 const PageContainer = styled.div`
-  background-color: #42607b;
+  background-color: #4b0082;
   width: 100%;
   min-height: 100vh;
   padding: 20px;
@@ -31,7 +31,7 @@ const ImageWrapper = styled.div`
 const TitleWrapper = styled.div`
   h1 {
     font-size: 32px;
-    color: #ffffff;
+    color: #4b0082;
     font-weight: 400;
   }
 `;
@@ -89,7 +89,7 @@ const SidebarWrapper = styled.div`
 `;
 
 const ExploreButton = styled.button`
-  background-color: #00a1d4;
+  background-color: #da70d6;
   border-radius: 5px;
   padding: 10px;
   cursor: pointer;
@@ -145,7 +145,7 @@ const WebApiServiceDetails: React.FC = () => {
     <PageContainer>
       <ProductHeader>
         <ImageWrapper>
-          <img src={adobeImg} alt="API Logo" />
+          <img src={adixooImg} alt="API Logo" />
         </ImageWrapper>
         <TitleWrapper>
           <h1>{propsData.title}</h1>

@@ -19,9 +19,18 @@ module.exports = {
     },
   },
   rules: {
-    'prettier/prettier': 'error',
+    // Prettier integration
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto', // Resolves line-ending issues
+      },
+    ],
+    // TypeScript rules
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    // React rules (add more as needed)
+    'react/prop-types': 'off', // Disable if using TypeScript for props validation
   },
 };

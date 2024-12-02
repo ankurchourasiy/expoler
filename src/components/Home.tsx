@@ -5,7 +5,7 @@ import { fetchProvidersList } from '../services/api';
 
 // Define the styled components
 const OverlayWrapper = styled.div<{ isOpen: boolean }>`
-  background-color: #42607b;
+  background-color: #4caf50;
   width: 100%;
   height: 100vh;
   display: flex;
@@ -35,7 +35,7 @@ const ButtonContainer = styled.div`
 `;
 
 const ExploreButton = styled.button<{ isOpen: boolean }>`
-  background-color: #00a1d4;
+  background-color: #ffa500;
   border-radius: 5px;
   padding: 10px;
   cursor: pointer;
@@ -75,7 +75,7 @@ const Home = () => {
       <OverlayWrapper isOpen={isOpen} onClick={handleOverlayClick}>
         <ButtonContainer>
           <ExploreButton onClick={toggleSidebar} isOpen={isOpen}>
-            Explore Web APIs
+            Explore the Web Apiss!
           </ExploreButton>
         </ButtonContainer>
       </OverlayWrapper>

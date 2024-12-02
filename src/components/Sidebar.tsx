@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ArrowImg from '../assets/ArrowImg.png';
-import Adobe from '../assets/Adobe.png';
+import Adixoo from '../assets/adixoo.jpg';
 import { fetchProvidersList, fetchProviderDetails } from '../services/api';
 
 interface ProviderInfo {
@@ -25,9 +25,9 @@ const SidebarWrapper = styled.div<SidebarProps>`
   right: ${({ isOpen }) => (isOpen ? '0' : '-520px')};
   width: 520px;
   height: 100%;
-  background-color: #42607b;
+  background-color: #4b0082;
   transition: right 0.3s ease;
-  color: white;
+  color: #000000;
   z-index: 2;
   overflow: auto;
 `;
@@ -133,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   return (
     <SidebarWrapper isOpen={isOpen} toggleSidebar={toggleSidebar}>
       <SidebarContent>
-        <SidebarTitle>Select Provider</SidebarTitle>
+        <SidebarTitle> Data for the Api</SidebarTitle>
         {providers.map((item, index) => (
           <AccordionSection key={index} isActive={activeStates[index]}>
             <AccordionHeader onClick={() => handleAccordionClick(item, index)}>
@@ -151,7 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                     key={apiIndex}
                     onClick={() => handleApiClick(item, apiIndex)}
                   >
-                    <img src={Adobe} alt="" />
+                    <img src={Adixoo} alt="" />
                     <ApiLabel>{api.title ?? 'No Data Found'}</ApiLabel>
                   </AccordionItem>
                 ))}
